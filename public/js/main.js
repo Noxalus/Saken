@@ -54,6 +54,10 @@ function Player(id, x, y, length) {
   }
 };
 
+Player.prototype.setCurrentDirection = function(direction) {
+  this.currentDirection = direction;
+}
+
 Player.prototype.update = function(delta) {
   var nextPosition = { 
     x: this.cells[0].x, 
@@ -65,9 +69,9 @@ Player.prototype.update = function(delta) {
   else if (this.currentDirection == DIRECTION.LEFT)
     nextPosition.x--;
   else if (this.currentDirection == DIRECTION.UP)
-    nextPosition.y++;
-  else if (this.currentDirection == DIRECTION.DOWN)
     nextPosition.y--;
+  else if (this.currentDirection == DIRECTION.DOWN)
+    nextPosition.y++;
 
   if(nextPosition.x == -1 || nextPosition.x == Game.canvas.width / 10 || 
      nextPosition.y == -1 || nextPosition.y == Game.height / 10)
@@ -96,6 +100,7 @@ Game = {
     console.log('Initialize');
 
     this.initializeCanvas();
+    this.initializeInputs();
     
     Socket.initialize();
 
@@ -129,6 +134,10 @@ Game = {
     this.canvas.height = $("#canvas").height();
   },
 
+  initializeInputs: function() {
+    $(document).keydown(this.handleInputs);
+  },
+
   createPlayer: function(id) {
     var randomPosition = this.generateRandomPosition();
     this.player = new Player(id, randomPosition.x, randomPosition.y, 5);
@@ -141,6 +150,19 @@ Game = {
     position.y = Math.round(Math.random() * ((this.canvas.height - 10) / 10));
     
     return position;
+  },
+
+  handleInputs: function(event) {
+      var key = event.which;
+
+      if(key == '37' && Game.player.currentDirection != DIRECTION.RIGHT) 
+        Game.player.setCurrentDirection(DIRECTION.LEFT);
+      else if(key == '38' && Game.player.currentDirection != DIRECTION.DOWN) 
+        Game.player.setCurrentDirection(DIRECTION.UP);
+      else if(key == '39' && Game.player.currentDirection != DIRECTION.LEFT) 
+        Game.player.setCurrentDirection(DIRECTION.RIGHT);
+      else if(key == '40' && Game.player.currentDirection != DIRECTION.UP) 
+        Game.player.setCurrentDirection(DIRECTION.DOWN);
   },
 
   frameBegin: function() {
