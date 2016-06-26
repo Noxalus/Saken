@@ -51,7 +51,7 @@ function Player(id, x, y, length) {
   this.cells = [];
   this.currentDirection = DIRECTION.RIGHT;
   this.nextDirection = this.currentDirection;
-  this.speed = 50;
+  this.speed = 10;
 
   for (var i = 0; i < length; i++) {
     var cell = new Cell(x - i, y);
@@ -61,6 +61,15 @@ function Player(id, x, y, length) {
 
 Player.prototype.changeDirection = function(direction) {
   this.nextDirection = direction;
+}
+
+Player.prototype.checkBodyCollision = function() {
+  for (var i = 0; i < this.cells.length; i++) {
+    if (this.x == this.cells[i].x && this.y == this.cells[i].y)
+      return true;
+  }
+
+  return false;
 }
 
 Player.prototype.update = function(delta) {
@@ -116,8 +125,13 @@ Player.prototype.update = function(delta) {
     {
       var tail = new Cell(nextPosition.x, nextPosition.y);
       
-      Game.generateFood(10);
+      Game.generateFood();
       Game.score++;
+    }
+    else if (this.checkBodyCollision())
+    {
+      Game.reset();
+      return;
     }
     else
     {
