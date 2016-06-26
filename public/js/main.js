@@ -41,15 +41,15 @@ Cell.prototype.draw = function() {
 
 // Player class
 function Player(id, x, y, length) {
-  this.x = x;
-  this.y = y;
+  this.realX = x;
+  this.realY = y;
   this.id = id;
   this.cells = [];
   this.currentDirection = DIRECTION.RIGHT;
+  this.speed = 10;
 
   for (var i = 0; i < length; i++) {
-    var cell = new Cell(this.x - i, y);
-
+    var cell = new Cell(x - i, y);
     this.cells.push(cell);
   }
 };
@@ -59,32 +59,58 @@ Player.prototype.setCurrentDirection = function(direction) {
 }
 
 Player.prototype.update = function(delta) {
-  var nextPosition = { 
-    x: this.cells[0].x, 
-    y: this.cells[0].y 
+  var nextDirection = {
+    x: 0,
+    y: 0
   };
 
   if (this.currentDirection == DIRECTION.RIGHT)
-    nextPosition.x++;
+    nextDirection.x++;
   else if (this.currentDirection == DIRECTION.LEFT)
-    nextPosition.x--;
+    nextDirection.x--;
   else if (this.currentDirection == DIRECTION.UP)
-    nextPosition.y--;
+    nextDirection.y--;
   else if (this.currentDirection == DIRECTION.DOWN)
-    nextPosition.y++;
+    nextDirection.y++;
 
-  if(nextPosition.x == -1 || nextPosition.x == Game.canvas.width / 10 || 
-     nextPosition.y == -1 || nextPosition.y == Game.height / 10)
+  var head = this.cells[0];
+
+  var nextPosition = {
+    x: this.realX + (nextDirection.x * (delta / 1000) * this.speed),
+    y: this.realY + (nextDirection.y * (delta / 1000) * this.speed),
+  }
+
+  // Make sure that we don't skip cells
+  if (nextPosition.x > head.x + 1)
+    nextPosition.x = head.x + 1;
+  else if (nextPosition.x < head.x - 1)
+    nextPosition.x = head.x - 1;
+  else if (nextPosition.y > head.y + 1)
+    nextPosition.y = head.y + 1;
+  else if (nextPosition.y < head.y - 1)
+    nextPosition.y = head.y - 1;
+
+  if(nextPosition.x <= -1 || nextPosition.x >= Game.canvas.width / 10 || 
+     nextPosition.y <= -1 || nextPosition.y >= Game.height / 10)
   {
     Game.reset();
     return;
   }
 
-  var tail = this.cells.pop();
-  tail.x = nextPosition.x; 
-  tail.y = nextPosition.y;
+  // Moved to a new cell
+  if (nextPosition.x == head.x + 1 || nextPosition.x == head.x - 1 ||
+      nextPosition.y == head.y + 1 || nextPosition.y == head.y - 1)
+  {
+    var tail = this.cells.pop();
 
-  this.cells.unshift(tail);
+    tail.x = nextPosition.x; 
+    tail.y = nextPosition.y;
+
+    this.cells.unshift(tail);
+  }
+
+  this.realX = nextPosition.x;
+  this.realY = nextPosition.y;
 };
 
 Player.prototype.draw = function() {
