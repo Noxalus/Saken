@@ -43,13 +43,15 @@ Cell.prototype.draw = function() {
 
 // Player class
 function Player(id, x, y, length) {
+  this.x = x;
+  this.y = y;
   this.realX = x;
   this.realY = y;
   this.id = id;
   this.cells = [];
   this.currentDirection = DIRECTION.RIGHT;
   this.nextDirection = this.currentDirection;
-  this.speed = 10;
+  this.speed = 100;
 
   for (var i = 0; i < length; i++) {
     var cell = new Cell(x - i, y);
@@ -107,10 +109,23 @@ Player.prototype.update = function(delta) {
     if (this.currentDirection != this.nextDirection)
       this.currentDirection = this.nextDirection;
 
-    var tail = this.cells.pop();
+    this.x = nextPosition.x;
+    this.y = nextPosition.y;
 
-    tail.x = nextPosition.x; 
-    tail.y = nextPosition.y;
+    if (Game.checkFoodCollision())
+    {
+      var tail = new Cell(nextPosition.x, nextPosition.y);
+      
+      Game.generateFood(10);
+    }
+    else
+    {
+      var tail = this.cells.pop();
+
+      tail.x = nextPosition.x; 
+      tail.y = nextPosition.y;
+
+    }
 
     this.cells.unshift(tail);
   }
@@ -143,13 +158,7 @@ Game = {
 
   reset: function() {
     Game.cells = [];
-    // Generate random cells
-    for (var i = 0; i < 10; i++) {
-      var randomPosition = this.generateRandomPosition();
-      var cell = new Cell(randomPosition.x, randomPosition.y);
-
-      Game.cells.push(cell);
-    }
+    Game.generateFood(10);
 
     if (Game.player) {
       var id = Game.player.id;
@@ -184,6 +193,14 @@ Game = {
     return position;
   },
 
+  generateFood: function(number = 1) {
+    for (var i = 0; i < number; i++) {
+      var randomPosition = Game.generateRandomPosition();
+      var cell = new Cell(randomPosition.x, randomPosition.y);
+      Game.cells.push(cell);
+    }
+  },
+
   handleInputs: function(event) {
       var key = event.which;
 
@@ -195,6 +212,20 @@ Game = {
         Game.player.changeDirection(DIRECTION.RIGHT);
       else if(key == '40' && Game.player.currentDirection != DIRECTION.UP) 
         Game.player.changeDirection(DIRECTION.DOWN);
+  },
+
+  checkFoodCollision: function() {
+    for (var i = 0; i < Game.cells.length; i++)
+    {
+      if (Game.player.x == Game.cells[i].x && Game.player.y == Game.cells[i].y)
+      {
+        Game.cells.splice(i, 1);
+
+        return true;
+      }
+    }
+
+    return false;
   },
 
   frameBegin: function() {
