@@ -1,9 +1,11 @@
-var DIRECTION = {
+const DIRECTION = {
   LEFT: { value: 0, name: 'left' },
   UP: { value: 1, name: 'up' },
   RIGHT: { value: 2, name: 'right' },
   DOWN: { value: 3, name: 'down' }
 }
+
+const CELL_SIZE = 10;
 
 Socket = {
   socket: null,
@@ -25,7 +27,7 @@ Socket = {
 }
 
 // Cell class
-function Cell(x, y, width = 10, height = 10) {
+function Cell(x, y, width = CELL_SIZE, height = CELL_SIZE) {
   this.x = x;
   this.y = y;
   this.width = width;
@@ -46,6 +48,7 @@ function Player(id, x, y, length) {
   this.id = id;
   this.cells = [];
   this.currentDirection = DIRECTION.RIGHT;
+  this.nextDirection = this.currentDirection;
   this.speed = 10;
 
   for (var i = 0; i < length; i++) {
@@ -54,8 +57,8 @@ function Player(id, x, y, length) {
   }
 };
 
-Player.prototype.setCurrentDirection = function(direction) {
-  this.currentDirection = direction;
+Player.prototype.changeDirection = function(direction) {
+  this.nextDirection = direction;
 }
 
 Player.prototype.update = function(delta) {
@@ -90,8 +93,8 @@ Player.prototype.update = function(delta) {
   else if (nextPosition.y < head.y - 1)
     nextPosition.y = head.y - 1;
 
-  if(nextPosition.x <= -1 || nextPosition.x >= Game.canvas.width / 10 || 
-     nextPosition.y <= -1 || nextPosition.y >= Game.height / 10)
+  if(nextPosition.x <= -1 || nextPosition.x >= Game.canvas.width / CELL_SIZE || 
+     nextPosition.y <= -1 || nextPosition.y >= Game.height / CELL_SIZE)
   {
     Game.reset();
     return;
@@ -101,6 +104,9 @@ Player.prototype.update = function(delta) {
   if (nextPosition.x == head.x + 1 || nextPosition.x == head.x - 1 ||
       nextPosition.y == head.y + 1 || nextPosition.y == head.y - 1)
   {
+    if (this.currentDirection != this.nextDirection)
+      this.currentDirection = this.nextDirection;
+
     var tail = this.cells.pop();
 
     tail.x = nextPosition.x; 
@@ -172,8 +178,8 @@ Game = {
   generateRandomPosition: function() {
     var position = {};
 
-    position.x = Math.round(Math.random() * ((this.canvas.width - 10) / 10));
-    position.y = Math.round(Math.random() * ((this.canvas.height - 10) / 10));
+    position.x = Math.round(Math.random() * ((this.canvas.width - CELL_SIZE) / CELL_SIZE));
+    position.y = Math.round(Math.random() * ((this.canvas.height - CELL_SIZE) / CELL_SIZE));
     
     return position;
   },
@@ -182,13 +188,13 @@ Game = {
       var key = event.which;
 
       if(key == '37' && Game.player.currentDirection != DIRECTION.RIGHT) 
-        Game.player.setCurrentDirection(DIRECTION.LEFT);
+        Game.player.changeDirection(DIRECTION.LEFT);
       else if(key == '38' && Game.player.currentDirection != DIRECTION.DOWN) 
-        Game.player.setCurrentDirection(DIRECTION.UP);
+        Game.player.changeDirection(DIRECTION.UP);
       else if(key == '39' && Game.player.currentDirection != DIRECTION.LEFT) 
-        Game.player.setCurrentDirection(DIRECTION.RIGHT);
+        Game.player.changeDirection(DIRECTION.RIGHT);
       else if(key == '40' && Game.player.currentDirection != DIRECTION.UP) 
-        Game.player.setCurrentDirection(DIRECTION.DOWN);
+        Game.player.changeDirection(DIRECTION.DOWN);
   },
 
   frameBegin: function() {
@@ -208,11 +214,6 @@ Game = {
       return;
 
     Game.canvas.context.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
-
-    // Game.canvas.context.fillStyle = "white";
-    // Game.canvas.context.fillRect(0, 0, Game.canvas.width, Game.canvas.height);
-    // Game.canvas.context.strokeStyle = "black";
-    // Game.canvas.context.strokeRect(0, 0, Game.canvas.width, Game.canvas.height);
 
     // Draw cells
     for (var i = 0; i < Game.cells.length; i++) {
