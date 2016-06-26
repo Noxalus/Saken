@@ -51,7 +51,7 @@ function Player(id, x, y, length) {
   this.cells = [];
   this.currentDirection = DIRECTION.RIGHT;
   this.nextDirection = this.currentDirection;
-  this.speed = 100;
+  this.speed = 50;
 
   for (var i = 0; i < length; i++) {
     var cell = new Cell(x - i, y);
@@ -96,7 +96,7 @@ Player.prototype.update = function(delta) {
     nextPosition.y = head.y - 1;
 
   if(nextPosition.x <= -1 || nextPosition.x >= Game.canvas.width / CELL_SIZE || 
-     nextPosition.y <= -1 || nextPosition.y >= Game.height / CELL_SIZE)
+     nextPosition.y <= -1 || nextPosition.y >= Game.canvas.height / CELL_SIZE)
   {
     Game.reset();
     return;
@@ -117,6 +117,7 @@ Player.prototype.update = function(delta) {
       var tail = new Cell(nextPosition.x, nextPosition.y);
       
       Game.generateFood(10);
+      Game.score++;
     }
     else
     {
@@ -164,6 +165,8 @@ Game = {
       var id = Game.player.id;
       Game.createPlayer(Game.player.id);
     }
+
+    Game.score = 0;
   },
 
   initializeCanvas: function() {
@@ -255,6 +258,11 @@ Game = {
     if (Game.player) {
       Game.player.draw();
     }
+
+    Game.canvas.context.fillStyle = "white";
+    Game.canvas.context.strokeStyle = "black";
+    var scoreText = "Score: " + Game.score;
+    Game.canvas.context.fillText(scoreText, 5, Game.canvas.height - 5);
   },
 
   frameEnd: function() {
@@ -268,7 +276,8 @@ Game = {
       height: 0
   },
   cells: [],
-  player: null
+  player: null,
+  score: 0
 }
 
 $(document).ready(function() {
