@@ -51,7 +51,7 @@ function Player(id, x, y, length) {
   this.cells = [];
   this.currentDirection = DIRECTION.RIGHT;
   this.nextDirection = this.currentDirection;
-  this.speed = 10;
+  this.speed = 5;
 
   for (var i = 0; i < length; i++) {
     var cell = new Cell(x - i, y);
@@ -90,8 +90,8 @@ Player.prototype.update = function(delta) {
   var head = this.cells[0];
 
   var nextPosition = {
-    x: this.realX + (nextDirection.x * (delta / 1000) * this.speed),
-    y: this.realY + (nextDirection.y * (delta / 1000) * this.speed),
+    x: this.realX + (nextDirection.x * (1 / delta) * this.speed),
+    y: this.realY + (nextDirection.y * (1 / delta) * this.speed),
   }
 
   // Make sure that we don't skip cells
