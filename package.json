@@ -1,21 +1,42 @@
 {
-  "name": "snake",
+  "name": "saken",
   "version": "0.0.1",
   "description": "A simple multiplayer snake game using Node.js and Socket.io.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "nodemon server/index.js",
+    "lint": "eslint client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Noxalus/Saken"
   },
   "keywords": [
-    "snake"
+    "snake",
+    "multiplayer",
+    "real time"
   ],
   "author": "Noxalus",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "babel-polyfill": "^6.9.1",
     "express": "^4.14.0",
+    "jquery": "^3.0.0",
+    "mainloop.js": "^1.0.3",
     "node-uuid": "^1.4.7",
     "socket.io": "^1.4.8",
+    "socket.io-client": "^1.4.8",
     "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2016": "^6.11.0",
+    "css-loader": "^0.23.1",
+    "eslint": "^2.13.1",
+    "nodemon": "^1.9.2",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1"
   }
 }
