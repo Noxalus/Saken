@@ -4,14 +4,14 @@ const path = require("path");
 module.exports = {
   entry: './client/js/app.js',
   output: {
-    path: path.resolve(__dirname, 'build/js'),
+    path: path.resolve(__dirname, 'build/'),
     filename: 'app.bundle.js',
   },
   module: {
     preLoaders: [
       {
         test: /\.js$/,
-        exclude: /node_modules/
+        exclude: /node_modules/,
         loader: 'eslint-loader',
       }
     ],
