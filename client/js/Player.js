@@ -2,8 +2,7 @@
 
 const Cell = require('./Cell');
 const DIRECTION = require('./Direction');
-
-const CELL_SIZE = 25;
+const CONFIG = require('../../lib/Config');
 
 class Player {
   constructor(id, x, y, length, game) {
@@ -96,8 +95,8 @@ class Player {
 
     const nextPosition = this.getNexPosition(head, nextDirection, delta);
 
-    if (nextPosition.x <= -1 || nextPosition.x >= this.game.getCanvas().width / CELL_SIZE ||
-        nextPosition.y <= -1 || nextPosition.y >= this.game.getCanvas().height / CELL_SIZE) {
+    if (nextPosition.x <= -1 || nextPosition.x >= this.game.getCanvas().width / CONFIG.cellSize ||
+        nextPosition.y <= -1 || nextPosition.y >= this.game.getCanvas().height / CONFIG.cellSize) {
       this.game.reset();
 
       return;

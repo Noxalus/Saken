@@ -1,14 +1,14 @@
 'use strict';
 
-const CELL_SIZE = 25;
+const CONFIG = require('../../lib/Config');
 
 // Cell class
 class Cell {
   constructor(x, y, width, height) {
     this.x = x;
     this.y = y;
-    this.width = (typeof width !== 'undefined') ? width : CELL_SIZE;
-    this.height = (typeof height !== 'undefined') ? height : CELL_SIZE;
+    this.width = (typeof width !== 'undefined') ? width : CONFIG.cellSize;
+    this.height = (typeof height !== 'undefined') ? height : CONFIG.cellSize;
   }
 
   draw(context) {

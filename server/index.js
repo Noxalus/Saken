@@ -1,15 +1,15 @@
-var http = require('http');
-var express = require('express');
-var logger = require('winston');
-var socketio = require('socket.io');
-var uuid = require('node-uuid');
-var fs = require('fs');
+const http = require('http');
+const express = require('express');
+const logger = require('winston');
+const socketio = require('socket.io');
+const uuid = require('node-uuid');
+const fs = require('fs');
 
-var serverConfig = {};
-var gameConfig = {};
+let serverConfig = {};
+const gameConfig = require('../lib/config.js');
 
 function initializeSocket(server) {
-  var io = socketio(server);
+  let io = socketio(server);
   io.on('connection', function(client) {
       client.userid = uuid();
 
@@ -24,10 +24,10 @@ function initializeSocket(server) {
 }
 
 function run() {
-  var app = express();
+  let app = express();
   app.use(express.static(serverConfig.staticFolder));
 
-  var server = http.Server(app);
+  let server = http.Server(app);
 
   initializeSocket(server);
 
@@ -50,15 +50,5 @@ fs.readFile('./server/config.json', function (err, config) {
         return;
     }
 
-    // Load game config file
-    fs.readFile('./lib/config.json', function (err, config) {
-        if (err) {
-            logger.error('Error loading game config file: ' + err);
-            return;
-        }
-
-        gameConfig = JSON.parse(config);
-
-        run();
-    });
+    run();
 });

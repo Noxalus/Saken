@@ -6,8 +6,7 @@ const Network = require('./Network');
 const Cell = require('./Cell');
 const Player = require('./Player');
 const DIRECTION = require('./Direction');
-
-const CELL_SIZE = 25;
+const CONFIG = require('../../lib/Config');
 
 class Game {
   constructor() {
@@ -70,8 +69,8 @@ class Game {
 
   generateRandomPosition() {
     const position = {
-      x: Math.round(Math.random() * ((this.canvas.width - CELL_SIZE) / CELL_SIZE)),
-      y: Math.round(Math.random() * ((this.canvas.height - CELL_SIZE) / CELL_SIZE))
+      x: Math.round(Math.random() * ((this.canvas.width - CONFIG.cellSize) / CONFIG.cellSize)),
+      y: Math.round(Math.random() * ((this.canvas.height - CONFIG.cellSize) / CONFIG.cellSize))
     };
 
     return position;

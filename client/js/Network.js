@@ -15,12 +15,12 @@ class Network {
   }
 
   initializeEvents() {
-    let self = this;
+    const that = this;
 
     this.socket.on('onconnected', function(data) {
       console.log('Player is connected: ' + data.id);
 
-      self.game.createPlayer(data.id);
+      that.game.createPlayer(data.id);
     });
   }
 }
