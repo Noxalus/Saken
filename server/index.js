@@ -4,9 +4,9 @@ const logger = require('winston');
 const socketio = require('socket.io');
 const uuid = require('node-uuid');
 const fs = require('fs');
+const gameConfig = require('../lib/Config');
 
 let serverConfig = {};
-const gameConfig = require('../lib/config.js');
 
 function initializeSocket(server) {
   let io = socketio(server);
