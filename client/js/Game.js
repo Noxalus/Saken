@@ -9,81 +9,79 @@ const DIRECTION = require('./Direction');
 
 const CELL_SIZE = 25;
 
-function Game() {
-  let initialized = false;
-  let network = null;
-  let cells = [];
-  let player = null;
-  let score = 0;
-  const canvas = {
-    canvas: null,
-    context: null,
-    width: 0,
-    height: 0
-  };
+class Game {
+  constructor() {
+    this.initialized = false;
+    this.network = null;
+    this.cells = [];
+    this.player = null;
+    this.score = 0;
+    this.canvas = {
+      canvas: null,
+      context: null,
+      width: 0,
+      height: 0
+    };
+  }
 
-  this.initialize = function() {
-    console.log('Initialize');
-
+  initialize() {
     this.initializeCanvas();
-    this.initializeInputs();
-
-    network = new Network(this);
-    network.initialize();
+    this.initializeNetwork();
 
     this.reset();
 
-    initialized = true;
-  };
+    this.initialized = true;
+  }
 
-  this.reset = function() {
-    cells = [];
+  reset() {
+    this.cells = [];
     this.generateFood(10);
 
-    if (player) {
-      this.createPlayer(player.id);
+    if (this.player) {
+      this.createPlayer(this.player.id);
     }
 
-    score = 0;
-  };
+    this.score = 0;
+  }
 
-  this.initializeCanvas = function() {
+  initializeCanvas() {
     const c = $('#canvas')[0];
 
     c.width = window.innerWidth;
     c.height = window.innerHeight;
 
-    canvas.canvas = c;
-    canvas.context = c.getContext('2d');
-    canvas.width = $('#canvas').width();
-    canvas.height = $('#canvas').height();
-  };
+    this.canvas.canvas = c;
+    this.canvas.context = c.getContext('2d');
+    this.canvas.width = $('#canvas').width();
+    this.canvas.height = $('#canvas').height();
+  }
 
-  this.initializeInputs = function() {
-    $(document).keydown(this.handleInputs);
-  };
+  initializeNetwork() {
+    this.network = new Network(this);
+    this.network.initialize();
+  }
 
-  this.createPlayer = function(id) {
+  createPlayer(id) {
     const randomPosition = this.generateRandomPosition();
 
-    player = new Player(id, randomPosition.x, randomPosition.y, 5, this);
-    player.initialize();
-  };
+    this.player = new Player(id, randomPosition.x, randomPosition.y, 5, this);
+    this.player.initialize();
+  }
 
-  this.generateRandomPosition = function() {
+  generateRandomPosition() {
     const position = {
-      x: Math.round(Math.random() * ((canvas.width - CELL_SIZE) / CELL_SIZE)),
-      y: Math.round(Math.random() * ((canvas.height - CELL_SIZE) / CELL_SIZE))
+      x: Math.round(Math.random() * ((this.canvas.width - CELL_SIZE) / CELL_SIZE)),
+      y: Math.round(Math.random() * ((this.canvas.height - CELL_SIZE) / CELL_SIZE))
     };
 
     return position;
-  };
+  }
 
-  this.getCanvas = function() {
-    return canvas;
-  };
+  getCanvas() {
+    return this.canvas;
+  }
 
-  this.generateFood = function(number) {
+  generateFood(number) {
     if (typeof number === 'undefined') {
       number = 1;
     }
@@ -92,73 +90,73 @@ function Game() {
       const randomPosition = this.generateRandomPosition();
       const cell = new Cell(randomPosition.x, randomPosition.y);
 
-      cells.push(cell);
+      this.cells.push(cell);
     }
-  };
+  }
 
-  this.handleInputs = function(event) {
+  handleInput(event) {
     const key = event.which;
 
-    if (key === 37 && player.currentDirection !== DIRECTION.RIGHT) {
-      player.changeDirection(DIRECTION.LEFT);
-    } else if (key === 38 && player.currentDirection !== DIRECTION.DOWN) {
-      player.changeDirection(DIRECTION.UP);
-    } else if (key === 39 && player.currentDirection !== DIRECTION.LEFT) {
-      player.changeDirection(DIRECTION.RIGHT);
-    } else if (key === 40 && player.currentDirection !== DIRECTION.UP) {
-      player.changeDirection(DIRECTION.DOWN);
+    if (key === 37 && this.player.currentDirection !== DIRECTION.RIGHT) {
+      this.player.changeDirection(DIRECTION.LEFT);
+    } else if (key === 38 && this.player.currentDirection !== DIRECTION.DOWN) {
+      this.player.changeDirection(DIRECTION.UP);
+    } else if (key === 39 && this.player.currentDirection !== DIRECTION.LEFT) {
+      this.player.changeDirection(DIRECTION.RIGHT);
+    } else if (key === 40 && this.player.currentDirection !== DIRECTION.UP) {
+      this.player.changeDirection(DIRECTION.DOWN);
     }
-  };
+  }
 
-  this.checkFoodCollision = function() {
-    for (let i = 0; i < cells.length; i++) {
-      if (player.x === cells[i].x && player.y === cells[i].y) {
-        cells.splice(i, 1);
+  checkFoodCollision() {
+    for (let i = 0; i < this.cells.length; i++) {
+      if (this.player.x === this.cells[i].x && this.player.y === this.cells[i].y) {
+        this.cells.splice(i, 1);
 
         return true;
       }
     }
 
     return false;
-  };
+  }
 
-  this.increaseScore = function() {
-    score++;
-  };
+  increaseScore() {
+    this.score++;
+  }
 
-  this.update = function(delta) {
-    if (!initialized) {
+  update(delta) {
+    if (!this.initialized) {
       return;
     }
 
-    if (player) {
-      player.update(delta);
+    if (this.player) {
+      this.player.update(delta);
     }
-  };
+  }
 
-  this.draw = function() {
-    if (!initialized) {
+  draw() {
+    if (!this.initialized) {
       return;
     }
 
-    canvas.context.clearRect(0, 0, canvas.width, canvas.height);
+    this.canvas.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Draw cells
-    for (let i = 0; i < cells.length; i++) {
-      cells[i].draw(canvas.context);
+    for (let i = 0; i < this.cells.length; i++) {
+      this.cells[i].draw(this.canvas.context);
     }
 
     // Draw player
-    if (player) {
-      player.draw();
+    if (this.player) {
+      this.player.draw();
     }
 
-    const scoreText = 'Score: ' + score;
+    const scoreText = 'Score: ' + this.score;
 
-    canvas.context.fillStyle = 'white';
-    canvas.context.strokeStyle = 'black';
-    canvas.context.fillText(scoreText, 5, canvas.height - 5);
-  };
+    this.canvas.context.fillStyle = 'white';
+    this.canvas.context.strokeStyle = 'black';
+    this.canvas.context.fillText(scoreText, 5, this.canvas.height - 5);
+  }
 }
 
 module.exports = Game;

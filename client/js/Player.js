@@ -5,31 +5,35 @@ const DIRECTION = require('./Direction');
 
 const CELL_SIZE = 25;
 
-// Player class
-function Player(id, x, y, length, game) {
-  this.x = x;
-  this.y = y;
-  this.realX = x;
-  this.realY = y;
-  this.id = id;
-  this.cells = [];
-  this.currentDirection = DIRECTION.RIGHT;
-  this.nextDirection = this.currentDirection;
-  this.speed = 5;
+class Player {
+  constructor(id, x, y, length, game) {
+    this.x = x;
+    this.y = y;
+    this.realX = x;
+    this.realY = y;
+    this.id = id;
+    this.cells = [];
+    this.currentDirection = DIRECTION.RIGHT;
+    this.nextDirection = this.currentDirection;
+    this.speed = 5;
+    this.game = game;
 
-  this.initialize = function() {
+    this.initialize(length);
+  }
+
+  initialize(length) {
     for (let i = 0; i < length; i++) {
-      const cell = new Cell(x - i, y);
+      const cell = new Cell(this.x - i, this.y);
 
       this.cells.push(cell);
     }
-  };
+  }
 
-  this.changeDirection = function(direction) {
+  changeDirection(direction) {
     this.nextDirection = direction;
-  };
+  }
 
-  this.checkBodyCollision = function() {
+  checkBodyCollision() {
     for (let i = 0; i < this.cells.length; i++) {
       if (this.x === this.cells[i].x && this.y === this.cells[i].y) {
         return true;
@@ -37,9 +41,9 @@ function Player(id, x, y, length, game) {
     }
 
     return false;
-  };
+  }
 
-  this.update = function(delta) {
+  getNexDirection() {
     const nextDirection = {
       x: 0,
       y: 0
@@ -62,8 +66,10 @@ function Player(id, x, y, length, game) {
         break;
     }
 
-    const head = this.cells[0];
+    return nextDirection;
+  }
 
+  getNexPosition(head, nextDirection, delta) {
     const nextPosition = {
       x: this.realX + (nextDirection.x * (1 / delta) * this.speed),
       y: this.realY + (nextDirection.y * (1 / delta) * this.speed),
@@ -80,9 +86,19 @@ function Player(id, x, y, length, game) {
       nextPosition.y = head.y - 1;
     }
 
-    if (nextPosition.x <= -1 || nextPosition.x >= game.getCanvas().width / CELL_SIZE ||
-        nextPosition.y <= -1 || nextPosition.y >= game.getCanvas().height / CELL_SIZE) {
-      game.reset();
+    return nextPosition;
+  }
+
+  update(delta) {
+    const nextDirection = this.getNexDirection();
+
+    const head = this.cells[0];
+
+    const nextPosition = this.getNexPosition(head, nextDirection, delta);
+
+    if (nextPosition.x <= -1 || nextPosition.x >= this.game.getCanvas().width / CELL_SIZE ||
+        nextPosition.y <= -1 || nextPosition.y >= this.game.getCanvas().height / CELL_SIZE) {
+      this.game.reset();
 
       return;
     }
@@ -99,13 +115,13 @@ function Player(id, x, y, length, game) {
 
       let tail = null;
 
-      if (game.checkFoodCollision()) {
+      if (this.game.checkFoodCollision()) {
         tail = new Cell(nextPosition.x, nextPosition.y);
 
-        game.generateFood();
-        game.increaseScore();
+        this.game.generateFood();
+        this.game.increaseScore();
       } else if (this.checkBodyCollision()) {
-        game.reset();
+        this.game.reset();
 
         return;
       } else {
@@ -120,15 +136,15 @@ function Player(id, x, y, length, game) {
 
     this.realX = nextPosition.x;
     this.realY = nextPosition.y;
-  };
+  }
 
-  this.draw = function() {
+  draw() {
     for (let i = 0; i < this.cells.length; i++) {
       const cell = this.cells[i];
 
-      cell.draw(game.getCanvas().context);
+      cell.draw(this.game.getCanvas().context);
     }
-  };
+  }
 }
 
 module.exports = Player;

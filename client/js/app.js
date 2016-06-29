@@ -13,12 +13,33 @@ const Game = require('./Game');
 
 let game = null;
 
+function updateHandler(delta) {
+  if (game) {
+    game.update(delta);
+  }
+}
+
+function drawHandler(delta) {
+  if (game) {
+    game.draw(delta);
+  }
+}
+
+function inputHandler(event) {
+  if (game) {
+    game.handleInput(event);
+  }
+}
+
 $(document).ready(function() {
   game = new Game();
   game.initialize();
 
-  MainLoop.setUpdate(game.update);
-  MainLoop.setDraw(game.draw);
+  // Initialize inputs
+  $(document).keydown(inputHandler);
+
+  MainLoop.setUpdate(updateHandler);
+  MainLoop.setDraw(drawHandler);
 
   MainLoop.start();
 });
