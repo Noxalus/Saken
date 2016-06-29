@@ -1,16 +1,13 @@
+'use strict';
+
 const $ = require('jquery');
 
 const Network = require('./Network');
 const Cell = require('./Cell');
 const Player = require('./Player');
+const DIRECTION = require('./Direction');
 
 const CELL_SIZE = 25;
-const DIRECTION = {
-  LEFT: { value: 0, name: 'left' },
-  UP: { value: 1, name: 'up' },
-  RIGHT: { value: 2, name: 'right' },
-  DOWN: { value: 3, name: 'down' }
-};
 
 function Game() {
   let initialized = false;
@@ -18,11 +15,11 @@ function Game() {
   let cells = [];
   let player = null;
   let score = 0;
-  let canvas = {
-      canvas: null,
-      context: null,
-      width: 0,
-      height: 0
+  const canvas = {
+    canvas: null,
+    context: null,
+    width: 0,
+    height: 0
   };
 
   this.initialize = function() {
@@ -30,8 +27,9 @@ function Game() {
 
     this.initializeCanvas();
     this.initializeInputs();
-    
-    this.network = new Network({game: this});
+
+    network = new Network(this);
+    network.initialize();
 
     this.reset();
 
@@ -43,7 +41,6 @@ function Game() {
     this.generateFood(10);
 
     if (player) {
-      let id = player.id;
       this.createPlayer(player.id);
     }
 
@@ -51,14 +48,15 @@ function Game() {
   };
 
   this.initializeCanvas = function() {
-    let c = $("#canvas")[0];
+    const c = $('#canvas')[0];
+
     c.width = window.innerWidth;
     c.height = window.innerHeight;
-    
+
     canvas.canvas = c;
-    canvas.context = c.getContext("2d");
-    canvas.width = $("#canvas").width();
-    canvas.height = $("#canvas").height();
+    canvas.context = c.getContext('2d');
+    canvas.width = $('#canvas').width();
+    canvas.height = $('#canvas').height();
   };
 
   this.initializeInputs = function() {
@@ -66,52 +64,55 @@ function Game() {
   };
 
   this.createPlayer = function(id) {
-    let randomPosition = this.generateRandomPosition();
+    const randomPosition = this.generateRandomPosition();
+
     player = new Player(id, randomPosition.x, randomPosition.y, 5, this);
+    player.initialize();
   };
 
   this.generateRandomPosition = function() {
-    let position = {};
+    const position = {
+      x: Math.round(Math.random() * ((canvas.width - CELL_SIZE) / CELL_SIZE)),
+      y: Math.round(Math.random() * ((canvas.height - CELL_SIZE) / CELL_SIZE))
+    };
 
-    position.x = Math.round(Math.random() * ((canvas.width - CELL_SIZE) / CELL_SIZE));
-    position.y = Math.round(Math.random() * ((canvas.height - CELL_SIZE) / CELL_SIZE));
-    
     return position;
   };
 
   this.getCanvas = function() {
     return canvas;
-  }
+  };
 
   this.generateFood = function(number) {
-    if (number === undefined)
+    if (typeof number === 'undefined') {
       number = 1;
+    }
 
     for (let i = 0; i < number; i++) {
-      let randomPosition = this.generateRandomPosition();
-      let cell = new Cell(randomPosition.x, randomPosition.y);
+      const randomPosition = this.generateRandomPosition();
+      const cell = new Cell(randomPosition.x, randomPosition.y);
+
       cells.push(cell);
     }
   };
 
   this.handleInputs = function(event) {
-      let key = event.which;
+    const key = event.which;
 
-      if(key == '37' && player.currentDirection != DIRECTION.RIGHT) 
-        player.changeDirection(DIRECTION.LEFT);
-      else if(key == '38' && player.currentDirection != DIRECTION.DOWN) 
-        player.changeDirection(DIRECTION.UP);
-      else if(key == '39' && player.currentDirection != DIRECTION.LEFT) 
-        player.changeDirection(DIRECTION.RIGHT);
-      else if(key == '40' && player.currentDirection != DIRECTION.UP) 
-        player.changeDirection(DIRECTION.DOWN);
+    if (key === 37 && player.currentDirection !== DIRECTION.RIGHT) {
+      player.changeDirection(DIRECTION.LEFT);
+    } else if (key === 38 && player.currentDirection !== DIRECTION.DOWN) {
+      player.changeDirection(DIRECTION.UP);
+    } else if (key === 39 && player.currentDirection !== DIRECTION.LEFT) {
+      player.changeDirection(DIRECTION.RIGHT);
+    } else if (key === 40 && player.currentDirection !== DIRECTION.UP) {
+      player.changeDirection(DIRECTION.DOWN);
+    }
   };
 
   this.checkFoodCollision = function() {
-    for (let i = 0; i < cells.length; i++)
-    {
-      if (player.x == cells[i].x && player.y == cells[i].y)
-      {
+    for (let i = 0; i < cells.length; i++) {
+      if (player.x === cells[i].x && player.y === cells[i].y) {
         cells.splice(i, 1);
 
         return true;
@@ -126,17 +127,19 @@ function Game() {
   };
 
   this.update = function(delta) {
-    if (!initialized)
+    if (!initialized) {
       return;
+    }
 
     if (player) {
       player.update(delta);
     }
   };
 
-  this.draw = function(delta) {
-    if (!initialized)
+  this.draw = function() {
+    if (!initialized) {
       return;
+    }
 
     canvas.context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -150,9 +153,10 @@ function Game() {
       player.draw();
     }
 
-    canvas.context.fillStyle = "white";
-    canvas.context.strokeStyle = "black";
-    let scoreText = "Score: " + score;
+    const scoreText = 'Score: ' + score;
+
+    canvas.context.fillStyle = 'white';
+    canvas.context.strokeStyle = 'black';
     canvas.context.fillText(scoreText, 5, canvas.height - 5);
   };
 }

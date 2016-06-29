@@ -1,12 +1,20 @@
 const webpack = require('webpack');
+const path = require("path");
 
 module.exports = {
   entry: './client/js/app.js',
   output: {
-    path: './build/js',
+    path: path.resolve(__dirname, 'build/js'),
     filename: 'app.bundle.js',
   },
   module: {
+    preLoaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/
+        loader: 'eslint-loader',
+      }
+    ],
     loaders: [
       {
         test: /\.js$/,

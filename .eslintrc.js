@@ -67,7 +67,6 @@ module.exports = {
         "default-case": "off",
         "dot-location": "error",
         "dot-notation": "error",
-        "eol-last": "error",
         "eqeqeq": "error",
         "func-names": "off",
         "func-style": [
@@ -161,12 +160,6 @@ module.exports = {
         "no-octal-escape": "error",
         "no-param-reassign": "off",
         "no-path-concat": "error",
-        "no-plusplus": [
-            "error",
-            {
-                "allowForLoopAfterthoughts": true
-            }
-        ],
         // "no-process-env": "error",
         "no-process-exit": "off",
         "no-proto": "error",

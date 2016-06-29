@@ -1,9 +1,9 @@
+'use strict';
+
 const socketio = require('socket.io-client');
 
-const Game = require('./Game');
-
-function Network ({game}) {
-  let socket = null;
+function Network(game) {
+  this.socket = null;
 
   this.initialize = function() {
     this.socket = socketio();
@@ -12,14 +12,12 @@ function Network ({game}) {
   };
 
   this.initializeEvents = function() {
-    this.socket.on('onconnected', function(data){
+    this.socket.on('onconnected', function(data) {
       console.log('Player is connected: ' + data.id);
 
       game.createPlayer(data.id);
     });
   };
-
-  this.initialize();
 }
 
 module.exports = Network;
