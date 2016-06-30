@@ -10,7 +10,6 @@ const CONFIG = require('../../lib/Config');
 
 class Game {
   constructor() {
-    this.initialized = false;
     this.network = null;
     this.cells = [];
     this.player = null;
@@ -28,8 +27,6 @@ class Game {
     this.initializeNetwork();
 
     this.reset();
-
-    this.initialized = true;
   }
 
   reset() {
@@ -124,20 +121,12 @@ class Game {
   }
 
   update(delta) {
-    if (!this.initialized) {
-      return;
-    }
-
     if (this.player) {
       this.player.update(delta);
     }
   }
 
   draw() {
-    if (!this.initialized) {
-      return;
-    }
-
     this.canvas.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Draw cells
@@ -151,6 +140,7 @@ class Game {
     }
 
     const scoreText = 'Score: ' + this.score;
+
     $('#score').html(scoreText);
   }
 }
