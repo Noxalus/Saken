@@ -151,10 +151,7 @@ class Game {
     }
 
     const scoreText = 'Score: ' + this.score;
-
-    this.canvas.context.fillStyle = 'white';
-    this.canvas.context.strokeStyle = 'black';
-    this.canvas.context.fillText(scoreText, 5, this.canvas.height - 5);
+    $('#score').html(scoreText);
   }
 }
 
