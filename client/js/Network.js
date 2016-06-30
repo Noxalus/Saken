@@ -4,13 +4,11 @@ const socketio = require('socket.io-client');
 
 class Network {
   constructor(game) {
-    this.socket = null;
+    this.socket = socketio();
     this.game = game;
   }
 
   initialize() {
-    this.socket = socketio();
-
     this.initializeEvents();
   }
 

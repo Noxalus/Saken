@@ -1,12 +1,12 @@
+'use strict';
+
 const http = require('http');
 const express = require('express');
 const logger = require('winston');
 const socketio = require('socket.io');
-const uuid = require('node-uuid');
-const fs = require('fs');
-const gameConfig = require('../lib/Config');
 
-let serverConfig = {};
+const serverConfig = require('./Config');
+const Network = require('./Network');
 
 function initializeSocket(server) {
   let io = socketio(server);
@@ -24,31 +24,17 @@ function initializeSocket(server) {
 }
 
 function run() {
-  let app = express();
+  const app = express();
+
   app.use(express.static(serverConfig.staticFolder));
 
-  let server = http.Server(app);
+  const server = http.Server(app);
 
-  initializeSocket(server);
+  const network = new Network(server);
 
-  server.listen(serverConfig.port, function(){
-      logger.info('listening on *:' + serverConfig.port);
+  server.listen(serverConfig.port, function() {
+    logger.info('listening on *:' + serverConfig.port);
   });
 }
 
-// Load server config file
-fs.readFile('./server/config.json', function (err, config) {
-    if (err) {
-        logger.error('Error loading server config file: ' + err);
-        return;
-    }
-
-    serverConfig = JSON.parse(config);
-
-    if (!serverConfig.port) {
-        winston.error('Error loading config file: port is missing!');
-        return;
-    }
-
-    run();
-});
+run();
