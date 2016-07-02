@@ -117,6 +117,10 @@ class Game extends AbstractGame {
     const scoreText = 'Score: ' + this.score;
 
     $('#score').html(scoreText);
+
+    if (this.network) {
+      $('#debug').html('Ping: ' + this.network.getPing());
+    }
   }
 }
 

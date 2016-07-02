@@ -44,6 +44,10 @@ class Network {
     client.on('message', (message) => {
       that.handleClientMessage(client, message);
     });
+
+    client.on('clientPing', (data) => {
+      client.emit('serverPing', data);
+    });
   }
 
   handleClientMessage(client, message) {
@@ -117,12 +121,11 @@ class Network {
     this.playerClients.delete(player);
   }
 
-  sendUpdates(getStateForPlayer) {
+  sendUpdates() {
     for (const player of this.clientPlayers.values()) {
       const client = this.playerClients.get(player);
 
       // console.log('Player: ', player.position);
-      // console.log('Player state: ', getStateForPlayer(player));
 
       client.emit('onServerUpdate', this.game.getStateForPlayer(player));
     }

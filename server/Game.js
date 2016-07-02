@@ -26,8 +26,7 @@ class Game extends AbstractGame {
   update(delta) {
     super.update(delta);
 
-    const playerState = this.getStateForPlayer;
-    this.network.sendUpdates(playerState);
+    this.network.sendUpdates();
     this.clearEvents();
   }
 
