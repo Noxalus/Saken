@@ -1,34 +1,79 @@
 'use strict';
 
-const socketio = require('socket.io');
-const uuid = require('node-uuid');
 const logger = require('winston');
+const socketio = require('socket.io');
+
+const Client = require('./Client');
+const Player = require('./Player');
+const GameConfig = require('../lib/Config');
+const Utils = require('../lib/Utils');
 
 class Network {
-  constructor(server) {
+  constructor(game, server) {
+    this.game = game;
     this.socket = socketio(server);
+    this.clients = new Map();
     this.playerClients = new Map();
     this.clientPlayers = new Map();
 
-    this.initializeSocket();
+    this.initializeSocketListeners();
   }
 
-  initializeSocket() {
-    this.socket.on('connection', function(client) {
-      client.userid = uuid();
+  initializeSocketListeners() {
+    const that = this;
 
-      client.emit('onconnected', { id: client.userid });
+    this.socket.on('connection', function(socket) {
+      let client = new Client(socket);
 
-      logger.info('Player ' + client.userid + ' connected');
-
-      client.on('error', (err) => {
-        logger.info('Client error', err);
-      });
-
-      client.on('disconnect', function () {
-        logger.info('Client disconnected ' + client.userid);
-      });
+      that.addClient(client);
     });
+  }
+
+  start() {
+
+  }
+
+  listenToClient(client) {
+    const that = this;
+
+    client.on('error', (err) => {
+      logger.info('Client error', err);
+    });
+
+    client.on('disconnect', function () {
+      that.removeClient(client)
+    });
+
+    client.on('message', (message) => {
+      that.handleClientMessage(client, message);
+    });
+  }
+
+  handleClientMessage(client, message) {
+    console.log('New client message: ' + message);
+  }
+
+  addClient(client) {
+    this.clients.set(client.getId(), client);
+    this.listenToClient(client);
+
+    // Set random position
+    const randomPosition = Utils.generateRandomPosition();
+    const player = new Player(client.getId(), '[NAME]', randomPosition.x, randomPosition.y, GameConfig.player.defaultLength);
+
+    this.game.addPlayer(player);
+    this.addClientPlayer(client, player);
+  }
+
+  removeClient (client) {
+    const clientId = client.getId();
+    logger.info('Client disconnected ' + clientId);
+    this.clients.delete(clientId);
+
+    const player = this.getPlayerByClient(client);
+
+    this.game.removePlayer(player.getId());
+    this.removeClientPlayer(client);
   }
 
   addClientPlayer(client, player) {
@@ -37,6 +82,7 @@ class Network {
   }
 
   removeClientPlayer(client) {
+    console.log('Remove client: ' + client.getId());
     const player = this.clientPlayers.get(client);
 
     this.clientPlayers.delete(client);
@@ -44,10 +90,15 @@ class Network {
   }
 
   sendUpdates(getStateForPlayer) {
+    console.log('Client #: ' + this.clientPlayers.size);
+
     for (const player of this.clientPlayers.values()) {
       const client = this.playerClients.get(player);
 
-      client.emit('onServerUpdate', getStateForPlayer(player));
+      // console.log('Player: ', player);
+      // console.log('Player state: ', getStateForPlayer(player));
+
+      // client.emit('onServerUpdate', getStateForPlayer(player));
     }
   }
 
@@ -62,11 +113,11 @@ class Network {
   }
 
   getPlayerByClient(client) {
-    return clientPlayers.get(client);
+    return this.clientPlayers.get(client);
   }
 
   getClientByPlayer(player) {
-    return playerClients.get(player);
+    return this.playerClients.get(player);
   }
 }
 

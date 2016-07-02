@@ -6,7 +6,7 @@ const logger = require('winston');
 const socketio = require('socket.io');
 
 const serverConfig = require('./Config');
-const Network = require('./Network');
+const Game = require('./Game')
 
 function initializeSocket(server) {
   let io = socketio(server);
@@ -28,9 +28,11 @@ function run() {
 
   app.use(express.static(serverConfig.staticFolder));
 
-  const server = http.Server(app);
+  const server = http.createServer(app);
 
-  const network = new Network(server);
+  const game = new Game(server);
+
+  game.start();
 
   server.listen(serverConfig.port, function() {
     logger.info('listening on *:' + serverConfig.port);

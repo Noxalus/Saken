@@ -1,14 +1,14 @@
 'use strict';
 
-const CONFIG = require('../../lib/Config');
+const GameConfig = require('../../lib/Config');
 
 // Cell class
 class Cell {
   constructor(x, y, width, height) {
     this.x = x;
     this.y = y;
-    this.width = (typeof width !== 'undefined') ? width : CONFIG.cellSize;
-    this.height = (typeof height !== 'undefined') ? height : CONFIG.cellSize;
+    this.width = (typeof width !== 'undefined') ? width : GameConfig.world.cellSize;
+    this.height = (typeof height !== 'undefined') ? height : GameConfig.world.cellSize;
   }
 
   draw(context) {

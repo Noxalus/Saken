@@ -6,10 +6,14 @@ const Network = require('./Network');
 const Cell = require('./Cell');
 const Player = require('./Player');
 const DIRECTION = require('./Direction');
-const CONFIG = require('../../lib/Config');
+const GameConfig = require('../../lib/Config');
+const AbstractGame = require('../../lib/AbstractGame');
+const Utils = require('../../lib/Utils');
 
-class Game {
+class Game extends AbstractGame {
   constructor() {
+    super();
+
     this.network = null;
     this.cells = [];
     this.player = null;
@@ -58,19 +62,10 @@ class Game {
   }
 
   createPlayer(id) {
-    const randomPosition = this.generateRandomPosition();
+    const randomPosition = Utils.generateRandomPosition();
 
-    this.player = new Player(id, randomPosition.x, randomPosition.y, 5, this);
+    this.player = new Player(id, randomPosition.x, randomPosition.y, GameConfig.player.defaultLength, this);
     this.player.initialize();
-  }
-
-  generateRandomPosition() {
-    const position = {
-      x: Math.round(Math.random() * ((this.canvas.width - CONFIG.cellSize) / CONFIG.cellSize)),
-      y: Math.round(Math.random() * ((this.canvas.height - CONFIG.cellSize) / CONFIG.cellSize))
-    };
-
-    return position;
   }
 
   getCanvas() {
@@ -83,7 +78,7 @@ class Game {
     }
 
     for (let i = 0; i < number; i++) {
-      const randomPosition = this.generateRandomPosition();
+      const randomPosition = Utils.generateRandomPosition();
       const cell = new Cell(randomPosition.x, randomPosition.y);
 
       this.cells.push(cell);

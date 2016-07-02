@@ -2,7 +2,8 @@
 
 const Config = {
   port: 4242,
-  staticFolder: 'build'
+  staticFolder: 'build',
+  networkTimestep: 1000 / 22
 };
 
 module.exports = Config;
