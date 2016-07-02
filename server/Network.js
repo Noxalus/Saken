@@ -107,7 +107,7 @@ class Network {
     for (const player of this.clientPlayers.values()) {
       const client = this.playerClients.get(player);
 
-      // console.log('Player: ', player);
+      // console.log('Player: ', player.position);
       // console.log('Player state: ', getStateForPlayer(player));
 
       client.emit('onServerUpdate', this.game.getStateForPlayer(player));

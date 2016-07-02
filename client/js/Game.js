@@ -26,20 +26,7 @@ class Game extends AbstractGame {
   initialize() {
     this.initializeCanvas();
     this.initializeNetwork();
-
-    // this.reset();
   }
-
-  // reset() {
-  //   this.cells = [];
-  //   this.generateFood(10);
-
-  //   if (this.player) {
-  //     this.createPlayer(this.player.id);
-  //   }
-
-  //   this.score = 0;
-  // }
 
   initializeCanvas() {
     const c = $('#canvas')[0];
@@ -91,7 +78,10 @@ class Game extends AbstractGame {
     super.update(delta);
 
     if (this.localPlayer)
+    {
+      // console.log('Player: ', this.localPlayer.position);
       this.localPlayer.update(delta);
+    }
   }
 
   draw() {

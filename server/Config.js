@@ -3,7 +3,7 @@
 const Config = {
   port: 4242,
   staticFolder: 'build',
-  networkTimestep: 1000 / 22
+  networkTimestep: 45 // ms between each updates
 };
 
 module.exports = Config;

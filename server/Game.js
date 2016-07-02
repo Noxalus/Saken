@@ -14,17 +14,21 @@ class Game extends AbstractGame {
     const that = this;
 
     this.network = new Network(this, server);
-    this.gameLoop = new Timer(Config.networkTimestep, function() {
-        // console.log('Update network loop');
-        const playerState = that.getStateForPlayer;
-        that.network.sendUpdates(playerState);
-        that.clearEvents();
-      }
-    );
+    this.gameLoop = new Timer(Config.networkTimestep, function(delta) {
+      that.update(delta);
+    });
   }
 
   start() {
     this.gameLoop.start();
+  }
+
+  update(delta) {
+    super.update(delta);
+
+    const playerState = this.getStateForPlayer;
+    this.network.sendUpdates(playerState);
+    this.clearEvents();
   }
 
   stop() {
