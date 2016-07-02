@@ -24,9 +24,6 @@ class Game extends AbstractGame {
   }
 
   start() {
-    super.start();
-
-    this.network.start();
     this.gameLoop.start();
   }
 

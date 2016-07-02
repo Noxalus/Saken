@@ -7,9 +7,6 @@ class Client {
   constructor(socket) {
     this.socket = socket;
     this.id = uuid();
-
-    socket.emit('onconnected', { id: this.id });
-    logger.info('Player ' + this.id + ' connected');
   }
 
   getId() {

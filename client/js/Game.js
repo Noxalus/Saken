@@ -3,7 +3,6 @@
 const $ = require('jquery');
 
 const Network = require('./Network');
-const Player = require('./Player');
 const DIRECTION = require('../../lib/Direction');
 const GameConfig = require('../../lib/Config');
 const AbstractGame = require('../../lib/AbstractGame');
@@ -14,7 +13,7 @@ class Game extends AbstractGame {
     super();
 
     this.network = null;
-    this.player = null;
+    this.localPlayer = null;
     this.score = 0;
     this.canvas = {
       canvas: null,
@@ -28,19 +27,19 @@ class Game extends AbstractGame {
     this.initializeCanvas();
     this.initializeNetwork();
 
-    this.reset();
+    // this.reset();
   }
 
-  reset() {
-    this.cells = [];
-    this.generateFood(10);
+  // reset() {
+  //   this.cells = [];
+  //   this.generateFood(10);
 
-    if (this.player) {
-      this.createPlayer(this.player.id);
-    }
+  //   if (this.player) {
+  //     this.createPlayer(this.player.id);
+  //   }
 
-    this.score = 0;
-  }
+  //   this.score = 0;
+  // }
 
   initializeCanvas() {
     const c = $('#canvas')[0];
@@ -59,24 +58,28 @@ class Game extends AbstractGame {
     this.network.initialize();
   }
 
-  createPlayer(id) {
-    const randomPosition = Utils.generateRandomPosition();
+  getLocalPlayer(player) {
+    return this.localPlayer;
+  }
 
-    this.player = new Player(id, '[NAME]', randomPosition.x, randomPosition.y, GameConfig.player.defaultLength);
-    super.addPlayer(this.player);
+  setLocalPlayer(player) {
+    this.localPlayer = player;
   }
 
   handleInput(event) {
+    if (!this.localPlayer)
+      return;
+
     const key = event.which;
 
-    if (key === 37 && this.player.currentDirection !== DIRECTION.RIGHT) {
-      this.player.changeDirection(DIRECTION.LEFT);
-    } else if (key === 38 && this.player.currentDirection !== DIRECTION.DOWN) {
-      this.player.changeDirection(DIRECTION.UP);
-    } else if (key === 39 && this.player.currentDirection !== DIRECTION.LEFT) {
-      this.player.changeDirection(DIRECTION.RIGHT);
-    } else if (key === 40 && this.player.currentDirection !== DIRECTION.UP) {
-      this.player.changeDirection(DIRECTION.DOWN);
+    if (key === 37 && this.localPlayer.getDirection() !== DIRECTION.RIGHT) {
+      this.localPlayer.changeDirection(DIRECTION.LEFT);
+    } else if (key === 38 && this.localPlayer.getDirection() !== DIRECTION.DOWN) {
+      this.localPlayer.changeDirection(DIRECTION.UP);
+    } else if (key === 39 && this.localPlayer.getDirection() !== DIRECTION.LEFT) {
+      this.localPlayer.changeDirection(DIRECTION.RIGHT);
+    } else if (key === 40 && this.localPlayer.getDirection() !== DIRECTION.UP) {
+      this.localPlayer.changeDirection(DIRECTION.DOWN);
     }
   }
 
@@ -86,6 +89,9 @@ class Game extends AbstractGame {
 
   update(delta) {
     super.update(delta);
+
+    if (this.localPlayer)
+      this.localPlayer.update(delta);
   }
 
   draw() {
@@ -97,9 +103,12 @@ class Game extends AbstractGame {
     }
 
     // Draw player
-    if (this.player) {
-      this.player.draw(this.canvas.context);
+    for (const player of this.players.values()) {
+      player.draw(this.canvas.context);
     }
+
+    if (this.localPlayer)
+      this.localPlayer.draw(this.canvas.context);
 
     const scoreText = 'Score: ' + this.score;
 

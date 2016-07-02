@@ -10,6 +10,7 @@ const Utils = require('../lib/Utils');
 
 class Network {
   constructor(game, server) {
+    this.nameCounter = 0;
     this.game = game;
     this.socket = socketio(server);
     this.clients = new Map();
@@ -27,10 +28,6 @@ class Network {
 
       that.addClient(client);
     });
-  }
-
-  start() {
-
   }
 
   listenToClient(client) {
@@ -54,13 +51,30 @@ class Network {
   }
 
   addClient(client) {
-    this.clients.set(client.getId(), client);
     this.listenToClient(client);
 
     // Set random position
     const randomPosition = Utils.generateRandomPosition();
-    const player = new Player(client.getId(), '[NAME]', randomPosition.x, randomPosition.y, GameConfig.player.defaultLength);
+    this.nameCounter++;
+    const player = new Player(client.getId(), 'Noob#' + this.nameCounter, randomPosition.x, randomPosition.y, GameConfig.player.defaultLength);
 
+    logger.info('Current client: ' + client.getId());
+
+    // Send to the client the player data
+    client.emit('onConnected', player.toJSON());
+    logger.info('Player ' + player.getName() + ' connected');
+
+    // Send to other clients the new player data
+    for (const otherClient of this.clients.values()) {
+      otherClient.emit('onPlayerJoined', player.toJSON());
+    }
+
+    // Send to current client the data of other players
+    for (const otherPlayer of this.game.players.values()) {
+      client.emit('onPlayerJoined', otherPlayer.toJSON())
+    }
+
+    this.clients.set(client.getId(), client);
     this.game.addPlayer(player);
     this.addClientPlayer(client, player);
   }
