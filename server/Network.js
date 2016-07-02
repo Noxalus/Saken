@@ -96,7 +96,7 @@ class Network {
       // console.log('Player: ', player);
       // console.log('Player state: ', getStateForPlayer(player));
 
-      // client.emit('onServerUpdate', getStateForPlayer(player));
+      client.emit('onServerUpdate', this.game.getStateForPlayer(player));
     }
   }
 

@@ -3,9 +3,8 @@
 const $ = require('jquery');
 
 const Network = require('./Network');
-const Cell = require('./Cell');
 const Player = require('./Player');
-const DIRECTION = require('./Direction');
+const DIRECTION = require('../../lib/Direction');
 const GameConfig = require('../../lib/Config');
 const AbstractGame = require('../../lib/AbstractGame');
 const Utils = require('../../lib/Utils');
@@ -15,7 +14,6 @@ class Game extends AbstractGame {
     super();
 
     this.network = null;
-    this.cells = [];
     this.player = null;
     this.score = 0;
     this.canvas = {
@@ -64,25 +62,8 @@ class Game extends AbstractGame {
   createPlayer(id) {
     const randomPosition = Utils.generateRandomPosition();
 
-    this.player = new Player(id, randomPosition.x, randomPosition.y, GameConfig.player.defaultLength, this);
-    this.player.initialize();
-  }
-
-  getCanvas() {
-    return this.canvas;
-  }
-
-  generateFood(number) {
-    if (typeof number === 'undefined') {
-      number = 1;
-    }
-
-    for (let i = 0; i < number; i++) {
-      const randomPosition = Utils.generateRandomPosition();
-      const cell = new Cell(randomPosition.x, randomPosition.y);
-
-      this.cells.push(cell);
-    }
+    this.player = new Player(id, '[NAME]', randomPosition.x, randomPosition.y, GameConfig.player.defaultLength);
+    super.addPlayer(this.player);
   }
 
   handleInput(event) {
@@ -99,26 +80,12 @@ class Game extends AbstractGame {
     }
   }
 
-  checkFoodCollision() {
-    for (let i = 0; i < this.cells.length; i++) {
-      if (this.player.x === this.cells[i].x && this.player.y === this.cells[i].y) {
-        this.cells.splice(i, 1);
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   increaseScore() {
     this.score++;
   }
 
   update(delta) {
-    if (this.player) {
-      this.player.update(delta);
-    }
+    super.update(delta);
   }
 
   draw() {
@@ -131,7 +98,7 @@ class Game extends AbstractGame {
 
     // Draw player
     if (this.player) {
-      this.player.draw();
+      this.player.draw(this.canvas.context);
     }
 
     const scoreText = 'Score: ' + this.score;

@@ -20,6 +20,10 @@ class Network {
 
       that.game.createPlayer(data.id);
     });
+
+    this.socket.on('onServerUpdate', function(data) {
+      // console.log('onServerUpdate', data);
+    });
   }
 }
 
