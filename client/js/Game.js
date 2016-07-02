@@ -15,12 +15,16 @@ class Game extends AbstractGame {
     this.network = null;
     this.localPlayer = null;
     this.score = 0;
+    this.inputSeq = 0;
     this.canvas = {
       canvas: null,
       context: null,
       width: 0,
       height: 0
     };
+
+    this.clientTime = 0;
+    this.serverTime = 0;
   }
 
   initialize() {
@@ -59,14 +63,24 @@ class Game extends AbstractGame {
 
     const key = event.which;
 
-    if (key === 37 && this.localPlayer.getDirection() !== DIRECTION.RIGHT) {
-      this.localPlayer.changeDirection(DIRECTION.LEFT);
-    } else if (key === 38 && this.localPlayer.getDirection() !== DIRECTION.DOWN) {
-      this.localPlayer.changeDirection(DIRECTION.UP);
-    } else if (key === 39 && this.localPlayer.getDirection() !== DIRECTION.LEFT) {
-      this.localPlayer.changeDirection(DIRECTION.RIGHT);
-    } else if (key === 40 && this.localPlayer.getDirection() !== DIRECTION.UP) {
-      this.localPlayer.changeDirection(DIRECTION.DOWN);
+    if (this.localPlayer) {
+      this.inputSeq += 1;
+
+      this.localPlayer.pushInput({
+        key: key,
+        time: this.getTime(),
+        seq: this.inputSeq
+      });
+
+      if (this.network) {
+        let data = '';
+
+        data += key + '.';
+        data += this.getTime().toString().replace('.', '-') + '.';
+        data += this.inputSeq;
+
+        this.network.send(data);
+      }
     }
   }
 

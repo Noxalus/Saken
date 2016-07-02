@@ -48,6 +48,20 @@ class Network {
 
   handleClientMessage(client, message) {
     console.log('New client message: ' + message);
+
+    const parts = message.split('.');
+
+    const input = parseInt(parts[0], 10);
+    const inputTime = parts[1].replace('-', '.');
+    const inputSeq = parseInt(parts[2], 10);
+
+    const player = this.getPlayerByClient(client);
+
+    player.pushInput({
+        key: input,
+        time: inputTime,
+        seq: inputSeq
+    });
   }
 
   addClient(client) {

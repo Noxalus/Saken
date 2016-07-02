@@ -34,7 +34,6 @@ class Network {
 
     const player = new Player(data.id, data.name, data.position.x, data.position.y, data.length);
 
-    // this.game.addPlayer(player);
     this.game.setLocalPlayer(player);
   }
 
@@ -44,6 +43,10 @@ class Network {
       const player = new Player(data.id, data.name, data.position.x, data.position.y, data.length);
 
       this.game.addPlayer(player);
+  }
+
+  send(data) {
+    this.socket.send(data);
   }
 }
 

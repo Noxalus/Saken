@@ -2,14 +2,11 @@
 
 const GameConfig = require('../../lib/Config');
 const AbstractPlayer = require('../../lib/AbstractPlayer');
+const DIRECTION = require('../../lib/Direction');
 
 class Player extends AbstractPlayer {
   constructor(id, name, x, y, length) {
     super(id, name, x, y, length);
-  }
-
-  update(delta) {
-    super.update(delta);
   }
 
   draw(context) {
