@@ -18,7 +18,7 @@ class Game extends AbstractGame {
         // console.log('Update network loop');
         const playerState = that.getStateForPlayer;
         that.network.sendUpdates(playerState);
-        // game.clearEvents();
+        that.clearEvents();
       }
     );
   }

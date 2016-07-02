@@ -90,8 +90,6 @@ class Network {
   }
 
   sendUpdates(getStateForPlayer) {
-    console.log('Client #: ' + this.clientPlayers.size);
-
     for (const player of this.clientPlayers.values()) {
       const client = this.playerClients.get(player);
 
