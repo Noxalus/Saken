@@ -6,7 +6,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build/'),
     filename: 'app.bundle.js',
+    sourceMapFilename: '[file].map'
   },
+  devtool: 'source-map',
   module: {
     preLoaders: [
       {
