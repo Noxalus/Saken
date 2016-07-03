@@ -30,6 +30,10 @@ class Network {
     });
   }
 
+  sendAll(message, data) {
+    this.socket.sockets.emit(message, data);
+  }
+
   listenToClient(client) {
     const that = this;
 
@@ -127,7 +131,7 @@ class Network {
 
       // console.log('Player: ', player.position);
 
-      client.emit('onServerUpdate', this.game.getStateForPlayer(player));
+      client.emit('onServerUpdate', this.game.getGameState(player));
     }
   }
 
@@ -138,16 +142,6 @@ class Network {
 
     const client = this.playerClients.get(player);
     client.emit('onPlayerRespawn', player.toJSON());
-  }
-
-  receiveClientInput(client, input, inputTime, inputSeq) {
-    const player = this.clientPlayers.get(client);
-
-    // player.pushInput({
-    //     inputs: input,
-    //     time: inputTime,
-    //     seq: inputSeq
-    // });
   }
 
   getPlayerByClient(client) {

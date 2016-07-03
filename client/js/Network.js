@@ -3,6 +3,7 @@
 const socketio = require('socket.io-client');
 const Player = require('./Player');
 const ClientConfig = require('./Config');
+const Cell = require('./Cell');
 
 class Network {
   constructor(game) {
@@ -50,6 +51,10 @@ class Network {
     this.socket.on('onPlayerRespawn', function(data) {
       that.onPlayerRespawn(data);
     });
+
+    this.socket.on('onFoodAdded', function(data) {
+      that.onFoodAdded(data);
+    });
   }
 
   onConnected(data) {
@@ -78,16 +83,26 @@ class Network {
 
     // Naive approch
     if (true) {
+      // Change local player data
       this.game.localPlayer.setBody(data.ownPlayer.body);
       this.game.localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
       this.game.localPlayer.setDirection(data.ownPlayer.direction);
 
+      // Change other players data
       for (const playerData of data.players) {
         const player = this.game.getPlayerById(playerData.id);
 
         player.setBody(playerData.body);
         player.setPosition(playerData.position.x, playerData.position.y);
         player.setDirection(playerData.direction);
+      }
+
+      // Update foods state
+      this.game.foods = [];
+      for (const f of data.foods) {
+        const food = new Cell(f.x, f.y);
+
+        this.game.foods.push(food);
       }
     }
   }
@@ -97,6 +112,11 @@ class Network {
 
     this.game.localPlayer.reset(data.position.x, data.position.y);
     this.game.localPlayer.setBody(data.body);
+  }
+
+  onFoodAdded(data) {
+    // console.log('onFoodAdded: ', data);
+    this.game.foods.push(new Cell(data.x, data.y));
   }
 
   getNetLatency() {

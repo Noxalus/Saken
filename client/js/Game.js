@@ -4,6 +4,7 @@ const $ = require('jquery');
 
 const Network = require('./Network');
 const DIRECTION = require('../../lib/Direction');
+const ClientConfig = require('./Config');
 const GameConfig = require('../../lib/Config');
 const AbstractGame = require('../../lib/AbstractGame');
 const Utils = require('../../lib/Utils');
@@ -63,24 +64,25 @@ class Game extends AbstractGame {
 
     const key = event.which;
 
-    if (this.localPlayer) {
-      this.inputSeq += 1;
+    if (ClientConfig.allowedKeys.indexOf(key) == -1)
+      return;
 
-      this.localPlayer.pushInput({
-        key: key,
-        time: this.getTime(),
-        seq: this.inputSeq
-      });
+    this.inputSeq += 1;
 
-      if (this.network) {
-        let data = '';
+    this.localPlayer.pushInput({
+      key: key,
+      time: this.getTime(),
+      seq: this.inputSeq
+    });
 
-        data += key + '.';
-        data += this.getTime().toString().replace('.', '-') + '.';
-        data += this.inputSeq;
+    if (this.network) {
+      let data = '';
 
-        this.network.send(data);
-      }
+      data += key + '.';
+      data += this.getTime().toString().replace('.', '-') + '.';
+      data += this.inputSeq;
+
+      this.network.send(data);
     }
   }
 
@@ -101,9 +103,9 @@ class Game extends AbstractGame {
   draw() {
     this.canvas.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw cells
-    for (let i = 0; i < this.cells.length; i++) {
-      this.cells[i].draw(this.canvas.context);
+    // Draw foods
+    for (let i = 0; i < this.foods.length; i++) {
+      this.foods[i].draw(this.canvas.context);
     }
 
     // Draw other players
@@ -118,6 +120,7 @@ class Game extends AbstractGame {
     // Draw bounds
     const origin = { x: 5, y: 5 };
     this.canvas.context.strokeStyle = 'red';
+    this.canvas.context.lineWidth = 5;
     this.canvas.context.beginPath();
     this.canvas.context.moveTo(origin.x, origin.y);
     this.canvas.context.lineTo(GameConfig.world.width, origin.y);

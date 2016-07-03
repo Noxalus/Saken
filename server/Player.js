@@ -13,7 +13,7 @@ class Player extends AbstractPlayer {
       name: this.name,
       position: Object.assign({}, this.position),
       direction: this.direction,
-      body: this.cells
+      body: this.body
     };
   }
 }

@@ -4,6 +4,8 @@ const GameConfig = require('../../lib/Config');
 const AbstractPlayer = require('../../lib/AbstractPlayer');
 const DIRECTION = require('../../lib/Direction');
 
+const Cell = require('./Cell');
+
 class Player extends AbstractPlayer {
   constructor(id, name, x, y, length) {
     super(id, name, x, y, length);
@@ -15,12 +17,22 @@ class Player extends AbstractPlayer {
     this.nextDirection = value;
   }
 
+  setBody(body) {
+    this.body = [];
+
+    for (const cell of body) {
+      this.body.push(new Cell(cell.x, cell.y, cell.width, cell.height));
+    }
+  }
+
   draw(context) {
     if (!this.isAlive)
       return;
 
-    for (let i = 0; i < this.cells.length; i++) {
-      const cell = this.cells[i];
+    context.lineWidth = 1;
+
+    for (let i = 0; i < this.body.length; i++) {
+      const cell = this.body[i];
       cell.draw(context);
     }
 
