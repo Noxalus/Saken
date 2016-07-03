@@ -51,7 +51,9 @@ class Network {
   onConnected(data) {
     console.log('onConnected', data);
 
-    const player = new Player(data.id, data.name, data.position.x, data.position.y, data.length);
+    const player = new Player(data.id, data.name, data.position.x, data.position.y, data.body.length);
+    player.setBody(data.body);
+    player.setDirection(data.direction);
 
     this.game.setLocalPlayer(player);
   }
@@ -59,13 +61,31 @@ class Network {
   onPlayerJoined(data) {
       console.log('onPlayerJoined: ', data);
 
-      const player = new Player(data.id, data.name, data.position.x, data.position.y, data.length);
+      const player = new Player(data.id, data.name, data.position.x, data.position.y, data.body.length);
+      player.setBody(data.body);
+      player.setDirection(data.direction);
 
       this.game.addPlayer(player);
   }
 
   onServerUpdate(data) {
     // console.log('onServerUpdate', data);
+    const serverTime = data.serverTime;
+
+    // Naive approch
+    if (true) {
+      this.game.localPlayer.setBody(data.ownPlayer.body);
+      this.game.localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
+      this.game.localPlayer.setDirection(data.ownPlayer.direction);
+
+      for (const playerData of data.players) {
+        const player = this.game.getPlayerById(playerData.id);
+
+        player.setBody(playerData.body);
+        player.setPosition(playerData.position.x, playerData.position.y);
+        player.setDirection(playerData.direction);
+      }
+    }
   }
 
   getNetLatency() {

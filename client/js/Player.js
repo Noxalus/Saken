@@ -9,6 +9,12 @@ class Player extends AbstractPlayer {
     super(id, name, x, y, length);
   }
 
+  // Should be use only with data retrieved from the server
+  setDirection(value) {
+    this.direction = value;
+    this.nextDirection = value;
+  }
+
   draw(context) {
     for (let i = 0; i < this.cells.length; i++) {
       const cell = this.cells[i];
