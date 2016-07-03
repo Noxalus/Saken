@@ -87,6 +87,7 @@ class Network {
       this.game.localPlayer.setBody(data.ownPlayer.body);
       this.game.localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
       this.game.localPlayer.setDirection(data.ownPlayer.direction);
+      this.game.localPlayer.setScore(data.ownPlayer.score);
 
       // Change other players data
       for (const playerData of data.players) {

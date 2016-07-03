@@ -15,7 +15,6 @@ class Game extends AbstractGame {
 
     this.network = null;
     this.localPlayer = null;
-    this.score = 0;
     this.inputSeq = 0;
     this.canvas = {
       canvas: null,
@@ -86,10 +85,6 @@ class Game extends AbstractGame {
     }
   }
 
-  increaseScore() {
-    this.score++;
-  }
-
   update(delta) {
     super.update(delta);
 
@@ -130,9 +125,11 @@ class Game extends AbstractGame {
     this.canvas.context.stroke();
 
     // Draw UI
-    const scoreText = 'Score: ' + this.score;
+    if (this.localPlayer) {
+      const scoreText = 'Score: ' + this.localPlayer.getScore();
 
-    $('#score').html(scoreText);
+      $('#score').html(scoreText);
+    }
 
     if (this.network) {
       $('#debug').html('Ping: ' + this.network.getPing());

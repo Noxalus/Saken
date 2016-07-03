@@ -25,6 +25,10 @@ class Player extends AbstractPlayer {
     }
   }
 
+  setScore(value) {
+    this.score = value;
+  }
+
   draw(context) {
     if (!this.isAlive)
       return;
