@@ -131,6 +131,15 @@ class Network {
     }
   }
 
+  respawn(player) {
+    const randomPosition = Utils.generateRandomPosition();
+    player.reset(randomPosition.x, randomPosition.y);
+    player.generateBody(GameConfig.player.defaultLength);
+
+    const client = this.playerClients.get(player);
+    client.emit('onPlayerRespawn', player.toJSON());
+  }
+
   receiveClientInput(client, input, inputTime, inputSeq) {
     const player = this.clientPlayers.get(client);
 

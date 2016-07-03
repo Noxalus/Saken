@@ -30,6 +30,11 @@ class Network {
   initializeEvents() {
     const that = this;
 
+    this.socket.on('serverPing', (data) => {
+      that.netPing = new Date().getTime() - data;
+      that.netLatency = that.netPing / 2;
+    });
+
     this.socket.on('onConnected', function(data) {
       that.onConnected(data);
     });
@@ -42,9 +47,8 @@ class Network {
       that.onServerUpdate(data);
     });
 
-    this.socket.on('serverPing', (data) => {
-      that.netPing = new Date().getTime() - data;
-      that.netLatency = that.netPing / 2;
+    this.socket.on('onPlayerRespawn', function(data) {
+      that.onPlayerRespawn(data);
     });
   }
 
@@ -86,6 +90,13 @@ class Network {
         player.setDirection(playerData.direction);
       }
     }
+  }
+
+  onPlayerRespawn(data) {
+    console.log('onPlayerRespawn: ', data);
+
+    this.game.localPlayer.reset(data.position.x, data.position.y);
+    this.game.localPlayer.setBody(data.body);
   }
 
   getNetLatency() {

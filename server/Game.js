@@ -26,8 +26,28 @@ class Game extends AbstractGame {
   update(delta) {
     super.update(delta);
 
+    // Respawn all dead players
+    for (const player of this.players.values()) {
+      if (!player.isAlive) {
+        this.network.respawn(player);
+      }
+    }
+
     this.network.sendUpdates();
     this.clearEvents();
+  }
+
+  generateFood(number) {
+    if (typeof number === 'undefined') {
+      number = 1;
+    }
+
+    for (let i = 0; i < number; i++) {
+      const randomPosition = Utils.generateRandomPosition();
+      const cell = new Cell(randomPosition.x, randomPosition.y);
+
+      this.cells.push(cell);
+    }
   }
 
   stop() {
