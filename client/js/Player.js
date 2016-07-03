@@ -29,8 +29,6 @@ class Player extends AbstractPlayer {
     if (!this.isAlive)
       return;
 
-    context.lineWidth = 1;
-
     for (let i = 0; i < this.body.length; i++) {
       const cell = this.body[i];
       cell.draw(context);
