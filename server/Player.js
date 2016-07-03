@@ -14,7 +14,8 @@ class Player extends AbstractPlayer {
       position: Object.assign({}, this.position),
       direction: this.direction,
       body: this.body,
-      score: this.score
+      score: this.score,
+      isAlive: this.isAlive
     };
   }
 }

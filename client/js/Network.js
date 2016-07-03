@@ -88,6 +88,7 @@ class Network {
       this.game.localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
       this.game.localPlayer.setDirection(data.ownPlayer.direction);
       this.game.localPlayer.setScore(data.ownPlayer.score);
+      this.game.localPlayer.isAlive = data.ownPlayer.isAlive;
 
       // Change other players data
       for (const playerData of data.players) {
@@ -96,6 +97,7 @@ class Network {
         player.setBody(playerData.body);
         player.setPosition(playerData.position.x, playerData.position.y);
         player.setDirection(playerData.direction);
+        player.isAlive = playerData.isAlive;
       }
 
       // Update foods state
