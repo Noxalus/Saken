@@ -106,14 +106,27 @@ class Game extends AbstractGame {
       this.cells[i].draw(this.canvas.context);
     }
 
-    // Draw player
+    // Draw other players
     for (const player of this.players.values()) {
       player.draw(this.canvas.context);
     }
 
+    // Draw the local player
     if (this.localPlayer)
       this.localPlayer.draw(this.canvas.context);
 
+    // Draw bounds
+    const origin = { x: 5, y: 5 };
+    this.canvas.context.strokeStyle = 'red';
+    this.canvas.context.beginPath();
+    this.canvas.context.moveTo(origin.x, origin.y);
+    this.canvas.context.lineTo(GameConfig.world.width, origin.y);
+    this.canvas.context.lineTo(GameConfig.world.width, GameConfig.world.height);
+    this.canvas.context.lineTo(origin.x, GameConfig.world.height);
+    this.canvas.context.lineTo(origin.x, origin.y);
+    this.canvas.context.stroke();
+
+    // Draw UI
     const scoreText = 'Score: ' + this.score;
 
     $('#score').html(scoreText);
