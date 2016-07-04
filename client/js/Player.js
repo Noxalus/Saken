@@ -11,6 +11,10 @@ class Player extends AbstractPlayer {
     super(id, name, x, y, length);
   }
 
+  createNewCell(x, y, width, height) {
+    return new Cell(x, y, width, height);
+  }
+
   // Should be use only with data retrieved from the server
   setDirection(value) {
     this.direction = value;
@@ -21,7 +25,7 @@ class Player extends AbstractPlayer {
     this.body = [];
 
     for (const cell of body) {
-      this.body.push(new Cell(cell.x, cell.y, cell.width, cell.height));
+      this.body.push(this.createNewCell(cell.x, cell.y, cell.width, cell.height));
     }
   }
 
@@ -35,6 +39,7 @@ class Player extends AbstractPlayer {
 
     for (let i = 0; i < this.body.length; i++) {
       const cell = this.body[i];
+
       cell.draw(context);
     }
 
