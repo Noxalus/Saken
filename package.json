@@ -4,6 +4,7 @@
   "description": "A simple multiplayer snake game using Node.js and Socket.io.",
   "main": "index.js",
   "scripts": {
+    "postinstall": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/index.js",
     "client": "webpack -w --progress",
