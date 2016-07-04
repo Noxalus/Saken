@@ -91,7 +91,7 @@ class Network {
       this.game.localPlayer.isAlive = data.ownPlayer.isAlive;
 
       // Change other players data
-      for (const playerData of data.players) {
+      for (let playerData of data.players) {
         const player = this.game.getPlayerById(playerData.id);
 
         player.setBody(playerData.body);
@@ -102,7 +102,7 @@ class Network {
 
       // Update foods state
       this.game.foods = [];
-      for (const f of data.foods) {
+      for (let f of data.foods) {
         const food = new Cell(f.x, f.y);
 
         this.game.foods.push(food);

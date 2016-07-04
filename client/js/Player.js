@@ -24,7 +24,7 @@ class Player extends AbstractPlayer {
   setBody(body) {
     this.body = [];
 
-    for (const cell of body) {
+    for (let cell of body) {
       this.body.push(this.createNewCell(cell.x, cell.y, cell.width, cell.height));
     }
   }

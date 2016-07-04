@@ -104,7 +104,7 @@ class Game extends AbstractGame {
     }
 
     // Draw other players
-    for (const player of this.players.values()) {
+    for (let player of this.players.values()) {
       player.draw(this.canvas.context);
     }
 
