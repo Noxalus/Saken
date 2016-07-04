@@ -4,7 +4,7 @@
   "description": "A simple multiplayer snake game using Node.js and Socket.io.",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm install webpack -g && npm run build",
+    "postinstall": "node_modules/.bin/webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/index.js",
     "client": "webpack -w --progress",
@@ -35,9 +35,7 @@
     "node-uuid": "^1.4.7",
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.4.8",
-    "winston": "^2.2.0"
-  },
-  "devDependencies": {
+    "winston": "^2.2.0",
     "babel-core": "^6.10.4",
     "babel-loader": "^6.2.4",
     "babel-preset-es2016": "^6.11.0",
@@ -48,5 +46,8 @@
     "nodemon": "^1.9.2",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1"
+  },
+  "devDependencies": {
+
   }
 }
