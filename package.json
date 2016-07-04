@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/index.js",
     "client": "webpack -w",
+    "build": "webpack",
     "lint": "eslint client",
     "lint-server": "eslint server"
   },
@@ -41,7 +42,6 @@
     "file-loader": "^0.9.0",
     "nodemon": "^1.9.2",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "webpack": "^1.13.1"
   }
 }

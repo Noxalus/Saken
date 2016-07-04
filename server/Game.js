@@ -34,7 +34,10 @@ class Game extends AbstractGame {
     // Respawn all dead players
     for (const player of this.players.values()) {
       if (!player.isAlive) {
-        this.generateFood(player.getBody().length);
+        if (player.getBody().length > GameConfig.player.defaultLength) {
+          this.generateFood(player.getBody().length);
+        }
+
         this.network.respawn(player);
       }
     }
